@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación de Pádel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos adicionales si son necesarios */
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="container mx-auto bg-white rounded-xl shadow-md p-8">
+        <h1 class="text-2xl font-bold mb-6 text-center">Gestión de Jugadores y Partidos de Pádel</h1>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">Añadir Nuevo Jugador</h2>
+            <div class="flex space-x-4">
+                <input type="text" id="playerName" placeholder="Nombre del jugador" class="flex-grow border border-gray-300 p-2 rounded-md">
+                <button onclick="addPlayer()" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Añadir Jugador</button>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">Jugadores Registrados</h2>
+            <ul id="playersList" class="list-disc pl-5">
+                </ul>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">Registrar Nuevo Partido</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="player1" class="block text-gray-700">Jugador 1:</label>
+                    <select id="player1" class="w-full border border-gray-300 p-2 rounded-md">
+                        <option value="">Seleccionar jugador</option>
+                        </select>
+                </div>
+                <div>
+                    <label for="player2" class="block text-gray-700">Jugador 2:</label>
+                    <select id="player2" class="w-full border border-gray-300 p-2 rounded-md">
+                        <option value="">Seleccionar jugador</option>
+                        </select>
+                </div>
+                <div>
+                    <label for="player3" class="block text-gray-700">Jugador 3:</label>
+                    <select id="player3" class="w-full border border-gray-300 p-2 rounded-md">
+                        <option value="">Seleccionar jugador</option>
+                        </select>
+                </div>
+                <div>
+                    <label for="player4" class="block text-gray-700">Jugador 4:</label>
+                    <select id="player4" class="w-full border border-gray-300 p-2 rounded-md">
+                        <option value="">Seleccionar jugador</option>
+                        </select>
+                </div>
+            </div>
+            <div class="flex space-x-4 mt-4">
+                <input type="text" id="scoreTeam1" placeholder="Puntuación Equipo 1" class="flex-grow border border-gray-300 p-2 rounded-md">
+                <input type="text" id="scoreTeam2" placeholder="Puntuación Equipo 2" class="flex-grow border border-gray-300 p-2 rounded-md">
+            </div>
+            <button onclick="addMatch()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 w-full">Registrar Partido</button>
+        </div>
+
+        <div>
+            <h2 class="text-xl font-semibold mb-4">Partidos Registrados</h2>
+            <ul id="matchesList" class="list-disc pl-5">
+                </ul>
+        </div>
+    </div>
+
+    <script>
+        let players = [];
+        let matches = [];
+
+        // Función para añadir un nuevo jugador
+        function addPlayer() {
+            const playerNameInput = document.getElementById('playerName');
+            const playerName = playerNameInput.value.trim();
+
+            if (playerName && !players.includes(playerName)) {
+                players.push(playerName);
+                playerNameInput.value = '';
+                renderPlayers();
+                populatePlayerSelects();
+            } else if (players.includes(playerName)) {
+                alert('Este jugador ya existe.');
+            } else {
+                alert('Por favor, introduce un nombre para el jugador.');
+            }
+        }
+
+        // Función para mostrar la lista de jugadores
+        function renderPlayers() {
+            const playersList = document.getElementById('playersList');
+            playersList.innerHTML = '';
+            players.forEach(player => {
+                const li = document.createElement('li');
+                li.textContent = player;
+                playersList.appendChild(li);
+            });
+        }
+
+        // Función para poblar los selectores de jugadores en el formulario de partido
+        function populatePlayerSelects() {
+            const playerSelects = ['player1', 'player2', 'player3', 'player4'];
+            playerSelects.forEach(selectId => {
+                const selectElement = document.getElementById(selectId);
+                selectElement.innerHTML = '<option value="">Seleccionar jugador</option>'; // Reset options
+                players.forEach(player => {
+                    const option = document.createElement('option');
+                    option.value = player;
+                    option.textContent = player;
+                    selectElement.appendChild(option);
+                });
+            });
+        }
+
+        // Función para añadir un nuevo partido
+        function addMatch() {
+            const player1 = document.getElementById('player1').value;
+            const player2 = document.getElementById('player2').value;
+            const player3 = document.getElementById('player3').value;
+            const player4 = document.getElementById('player4').value;
+            const scoreTeam1 = document.getElementById('scoreTeam1').value.trim();
+            const scoreTeam2 = document.getElementById('scoreTeam2').value.trim();
+
+            if (player1 && player2 && player3 && player4 && scoreTeam1 && scoreTeam2) {
+                const match = {
+                    team1: [player1, player2],
+                    team2: [player3, player4],
+                    score: `${scoreTeam1} - ${scoreTeam2}`
+                };
+                matches.push(match);
+                renderMatches();
+                // Reset form
+                document.getElementById('player1').value = '';
+                document.getElementById('player2').value = '';
+                document.getElementById('player3').value = '';
+                document.getElementById('player4').value = '';
+                document.getElementById('scoreTeam1').value = '';
+                document.getElementById('scoreTeam2').value = '';
+
+            } else {
+                alert('Por favor, completa todos los campos del partido.');
+            }
+        }
+
+        // Función para mostrar la lista de partidos
+        function renderMatches() {
+            const matchesList = document.getElementById('matchesList');
+            matchesList.innerHTML = '';
+            matches.forEach(match => {
+                const li = document.createElement('li');
+                li.textContent = `Equipo 1: ${match.team1.join(' y ')} vs Equipo 2: ${match.team2.join(' y ')} - Resultado: ${match.score}`;
+                matchesList.appendChild(li);
+            });
+        }
+
+        // Inicializar la aplicación
+        window.onload = () => {
+            renderPlayers();
+            renderMatches();
+            populatePlayerSelects();
+        };
+
+    </script>
+</body>
+</html>
+
